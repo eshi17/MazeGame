@@ -7,10 +7,19 @@
 // Global Variables
 int xcoord = 0;
 int ycoord = 7;
+int xsharka = 2;
+int ysharka = 2;
+int xsharkb = 7;
+int ysharkb = 7;
+int xsharkc = 1;
+int ysharkc = 0;
 boolean aTreasure = false;
 boolean bTreasure = false;
 boolean cTreasure = false;
 boolean dTreasure = false;
+boolean aAShark = false;
+boolean bBShark = false;
+boolean cCShark = false;
 
 void setup()                    // run once, when the sketch starts
 {
@@ -24,6 +33,7 @@ void loop()                     // run over and over again
   Serial.println(xcoord);
   Serial.print("y = ");
   Serial.println(ycoord);
+  EditColor(Orange, 10, 0, 2);
   
   CheckButtonsPress();
   if (Button_Right) //All code that prevents you from walking through walls comes from Brent Uramoto
@@ -69,15 +79,19 @@ void loop()                     // run over and over again
         }
       }
   }
+  
+  aShark();
+  DisplaySlate();
+  delay(1000);
+  
   DrawPx(xcoord,ycoord,Yellow);
   DisplaySlate();
-  delay(50);
+  delay(1000);
   ClearSlate();
   
   Ocean();
   drawPlatforms();
   Treasure();
-  DisplaySlate();
 }
 
 void drawPlatforms()
@@ -116,19 +130,10 @@ void Ocean()
 
 void Treasure()
 {
-  EditColor(Orange, 10, 0, 2);
-
-if(xcoord == 0 && ycoord == 3)
-  aTreasure = true;
   
 if (aTreasure == false)
   {
     DrawPx(0,3,Orange);
-  }
-
-if (aTreasure == true)
-  {
-    DrawPx(0,3,Blue);
   }
   
 if(xcoord == 6 && ycoord == 4)
@@ -169,4 +174,89 @@ if (dTreasure == true)
   {
     DrawPx(2,5,Blue);
   }
+}
+
+void aShark()
+{
+  DrawPx(xsharka, ysharka, Dark);
+  if (xsharka == 2)
+  {
+    if (ysharka == 2)
+    {
+      aAShark = false;
+    }
+  }
+    if (aAShark == false)
+    {
+      xsharka = xsharka + 1;
+    }
+  if (xsharka == 6)
+  {
+    if (ysharka == 2)
+    {
+      aAShark = true;
+    }
+  }
+    if (aAShark == true)
+    {
+      xsharka = xsharka - 1;
+    }
+  
+  DrawPx(xsharkb, ysharkb, Dark);
+  if (xsharkb == 7)
+  {
+    if (ysharkb == 7)
+    {
+      bBShark = false;
+    }
+  }
+    if (bBShark == false)
+    {
+      ysharkb = ysharkb - 1;
+    }
+  if (xsharkb == 7)
+  {
+    if (ysharkb == 2)
+    {
+      bBShark = true;
+    }
+  }
+    if (bBShark == true)
+    {
+      ysharkb = ysharkb + 1;
+    }
+    
+  DrawPx(xsharkc, ysharkc, Dark);
+  if (xsharkc == 2)
+  {
+    if (ysharkc == 0)
+    {
+      cCShark = false;
+    }
+  }
+    if (cCShark == false)
+    {
+      xsharkc = xsharkc + 1;
+    }
+  if (xsharkc == 8)
+  {
+    if (ysharkc == 0)
+    {
+      cCShark = true;
+    }
+  }
+    if (cCShark == true)
+    {
+      xsharkc = xsharkc - 1;
+    }
+  if(ReadPx(xcoord, ycoord) == Dark)
+   {
+     (xcoord = 0);
+     (ycoord = 7);
+     DrawPx(0, 3, Orange);
+     DrawPx(2, 5, Orange);
+     DrawPx(6, 4, Orange);
+     DrawPx(7, 1, Orange);
+     Tone_Start(ToneC3, 50);  
+   }
 }
