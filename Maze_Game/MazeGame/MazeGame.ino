@@ -17,9 +17,10 @@ boolean aTreasure = false;
 boolean bTreasure = false;
 boolean cTreasure = false;
 boolean dTreasure = false;//existance of treasure
-boolean aAShark = false;
-boolean bBShark = false;
-boolean cCShark = false;//direction of shark
+boolean dirAShark = false;
+boolean dirBShark = false;
+boolean dirCShark = false;//direction of shark
+int timer = 1;
 
 void setup()                    // run once, when the sketch starts
 {
@@ -29,6 +30,8 @@ void setup()                    // run once, when the sketch starts
 
 void loop()                     // run over and over again
 {
+  timer++; //add one to timer
+  if (timer > 20) timer = 1;
   Serial.print("x = ");
   Serial.println(xcoord); //checks x print
   Serial.print("y = ");
@@ -83,12 +86,12 @@ void loop()                     // run over and over again
       }
   }
   
-  {
+ {
     aShark();
-    DrawPx(xcoord,ycoord,Yellow);
-  }
+    DrawPx(xcoord,ycoord,Yellow); // Draws player
+ }
     DisplaySlate();
-    delay(400); //had trouble making it "real time". Compromised both sharks and player so that it moves at an equal speed, although that makes the player a little slow
+    delay(150); //had trouble making it "real time". Compromised both sharks and player so that it moves at an equal speed, although that makes the player a little slow
     ClearSlate();
   Ocean(); //blue screen
   drawPlatforms(); //white walls
@@ -130,7 +133,7 @@ void Ocean()
 
 void Treasure()
 {
-  if(xcoord == 0 && ycoord == 3)
+  if(xcoord == 0 && ycoord == 3) 
   {
     aTreasure = true; //if player is on 0,3 then aTreasure variable becomes true (from false)
   }
@@ -193,63 +196,71 @@ void Treasure()
 
 void aShark()
 {
-  DrawPx(xsharka, ysharka, Dark);//if dot is on location, then aAShark is false
-  if (xsharka == 2)
+  DrawPx(xsharka, ysharka, Dark);//if dot is on location, then dirAShark is false
+  if (timer % 2 == 0) //for every other turn, shark will move
   {
-    if (ysharka == 2)
+    if (xsharka == 2)
     {
-      aAShark = false;
+      if (ysharka == 2)
+      {
+        dirAShark = false;
+      }
     }
-  }
-  if (aAShark == false)//if location of shark is false, then shark moves towards designated location
-  {
-    xsharka = xsharka + 1;
-  }
-  if (xsharka == 6)
-  {
-    if (ysharka == 2)
+    if (dirAShark == false)//if location of shark is false, then shark moves towards designated location
     {
-      aAShark = true;//once the shark reaches the rebound location (6,2), then aAShark becomes true
+      xsharka = xsharka + 1;
     }
-  }
-  if (aAShark == true) // if aAShark is true, then it goes towards original location
-  {
-    xsharka = xsharka - 1;
+    if (xsharka == 6)
+    {
+      if (ysharka == 2)
+      {
+        dirAShark = true;//once the shark reaches the rebound location (6,2), then dirAShark becomes true
+      }
+    }
+    if (dirAShark == true) // if dirAShark is true, then it goes towards original location
+    {
+      xsharka = xsharka - 1;
+    }
   }
   
   DrawPx(xsharkb, ysharkb, Dark); //same concept as above
-  if (xsharkb == 7)
-  {
-    if (ysharkb == 7)
+  if (timer % 2 == 0)
     {
-      bBShark = false;
-    }
-  }
-  if (bBShark == false)
-  {
-    ysharkb = ysharkb - 1;
-  }
-  if (xsharkb == 7)
-  {
-    if (ysharkb == 2)
+      if (xsharkb == 7)
+      {
+        if (ysharkb == 7)
+        {
+          dirBShark = false;
+        }
+      }
+    if (dirBShark == false)
     {
-      bBShark = true;
+      ysharkb = ysharkb - 1;
     }
-  }
-  if (bBShark == true)
-  {
-    ysharkb = ysharkb + 1;
+    if (xsharkb == 7)
+    {
+      if (ysharkb == 2)
+      {
+        dirBShark = true;
+      }
+    }
+    if (dirBShark == true)
+    {
+      ysharkb = ysharkb + 1;
+    }
   }
     
   DrawPx(xsharkc, ysharkc, Dark);
-  if (xsharkc == 2)
+  if (timer % 2 == 0)
   {
-    if (ysharkc == 0)
+    if (xsharkc == 2)
     {
-      cCShark = false;
+      if (ysharkc == 0)
+      {
+        dirCShark = false;
+      }
     }
-  }
-  if (cCShark == false)
+  if (dirCShark == false)
   {
     xsharkc = xsharkc + 1;
   }
@@ -257,10 +268,10 @@ void aShark()
   {
     if (ysharkc == 0)
     {
-      cCShark = true;
+      dirCShark = true;
     }
   }
-  if (cCShark == true)
+  if (dirCShark == true)
   {
     xsharkc = xsharkc - 1;
   }
@@ -271,9 +282,13 @@ void aShark()
      Ocean();
      drawPlatforms();
      Treasure();
-     Tone_Start(ToneC3, 50);
+     {
+       Tone_Start(ToneC3, 50);
+     }
    }
+  }
 }
+
 
 void winGame()
 {
@@ -317,12 +332,14 @@ void winGame()
   DrawPx(6,1,DimYellow);
   DrawPx(1,0,DimYellow);
   DrawPx(6,0,DimYellow); //giant yellow star
-    Tone_Start(ToneA5,100);
-      delay(150);
-    Tone_Start(ToneB5,100);
-      delay(150);
-    Tone_Start(ToneC5,100);
-      delay(150); //decent sounding noise
+    {
+      Tone_Start(ToneA5,100);
+        delay(150);
+      Tone_Start(ToneB5,100);
+        delay(150);
+      Tone_Start(ToneC5,100);
+        delay(150); //decent sounding noise
+    }
   aTreasure = false;
   bTreasure = false;
   cTreasure = false;
